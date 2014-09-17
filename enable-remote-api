@@ -1,0 +1,18 @@
+#! /usr/bin/expect -f
+
+spawn vagrant ssh
+
+expect "core@*"
+
+send "sudo cp share/coreos-vagrant/docker-tcp.socket /etc/systemd/system/docker-tcp.socket\r"
+
+send "sudo systemctl enable docker-tcp.socket\r"
+send "sudo systemctl stop docker\r"
+send "sudo systemctl start docker-tcp.socket\r"
+send "sudo systemctl start docker\r"
+
+send "docker -H tcp://localhost:2375 ps\r"
+
+expect "CONTAINER ID*"
+
+send \003
